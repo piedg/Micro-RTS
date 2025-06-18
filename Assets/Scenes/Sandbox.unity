@@ -1916,6 +1916,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 903221178}
+  - component: {fileID: 903221180}
+  - component: {fileID: 903221179}
   m_Layer: 0
   m_Name: BuildingController
   m_TagString: Untagged
@@ -1932,12 +1934,40 @@ Transform:
   m_GameObject: {fileID: 903221177}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 13.256154, y: -3.694313, z: -8.390198}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &903221179
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 903221177}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7000350457f3f8743aa3712c99f981ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gridCellPrefab: {fileID: 0}
+--- !u!114 &903221180
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 903221177}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2745700caba3da94390e146dcb581bfe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gridWidth: 10
+  gridHeight: 10
+  cellSize: 1
 --- !u!1 &918238266
 GameObject:
   m_ObjectHideFlags: 0

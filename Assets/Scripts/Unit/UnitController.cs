@@ -3,7 +3,7 @@ using TinyRTS.Inputs;
 using TinyRTS.Unit;
 using UnityEngine;
 using System.Collections.Generic;
-using OpenUp.Utils;
+using TinyRTS.Patterns;
 
 namespace TinyRTS.Selection
 {

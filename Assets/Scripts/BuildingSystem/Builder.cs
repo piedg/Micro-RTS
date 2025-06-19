@@ -9,6 +9,7 @@ namespace TinyRTS.BuildSystem
     {
         [SerializeField] BaseBuilding _currentBuilding;
         private Transform _currentBuildingPreview;
+        private float _buildingOffset = 1f;
 
         private void Update()
         {
@@ -19,7 +20,10 @@ namespace TinyRTS.BuildSystem
 
             if (_currentBuildingPreview)
             {
-                _currentBuildingPreview.position = WorldMouse.Instance.GetPosition();
+                float2 snappedPosition = BuildingGrid.Instance.GetTilePos(
+                    Mathf.FloorToInt(WorldMouse.Instance.GetPosition().x ),
+                    Mathf.FloorToInt(WorldMouse.Instance.GetPosition().z));
+                _currentBuildingPreview.position = new Vector3(snappedPosition.x + _buildingOffset, 0f, snappedPosition.y + _buildingOffset);
             }
 
             if (Input.GetKeyDown(KeyCode.Space))
@@ -30,27 +34,30 @@ namespace TinyRTS.BuildSystem
 
         public void Build()
         {
-            if (BuildingGrid.Instance.CanPlaceBuilding(
-                    (int)WorldMouse.Instance.GetPosition().x,
-                    (int)WorldMouse.Instance.GetPosition().y,
-                    _currentBuilding.BuildingData.width,
-                    _currentBuilding.BuildingData.height))
-            {
-                Destroy(_currentBuildingPreview.gameObject);
-                Instantiate(_currentBuilding.gameObject,
-                    WorldMouse.Instance.GetPosition(),
-                    Quaternion.identity);
+            int startX = Mathf.FloorToInt(WorldMouse.Instance.GetPosition().x);
+            int startY = Mathf.FloorToInt(WorldMouse.Instance.GetPosition().z);
+            int width = _currentBuilding.BuildingData.width;
+            int height = _currentBuilding.BuildingData.height;
 
-                for (int i = 0; i < _currentBuilding.BuildingData.width; i++)
+            if (BuildingGrid.Instance.CanPlaceBuilding(startX, startY, width, height))
+            {
+                for (int x = 0; x < width; x++)
                 {
-                    for (int j = 0; j < _currentBuilding.BuildingData.height; j++)
+                    for (int y = 0; y < height; y++)
                     {
-                        BuildingGrid.Instance.SetTileOccupied(i, j, true);
+                        var tile = BuildingGrid.Instance.GetTile(startX + x, startY + y);
+                        tile.SetOccupied(true);
+                        Debug.Log($"Tile at {tile.Position} is {tile.IsOccupied}");
                     }
                 }
 
+                float2 placePosition = BuildingGrid.Instance.GetTilePos(startX, startY);
 
-                BuildingGrid.Instance.UpdateGrid();
+                Destroy(_currentBuildingPreview.gameObject);
+                Instantiate(_currentBuilding.gameObject,
+                    new Vector3(placePosition.x + _buildingOffset, 0f, placePosition.y + _buildingOffset),
+                    Quaternion.identity);
+
                 _currentBuildingPreview = null;
                 // _currentBuilding = null;
             }

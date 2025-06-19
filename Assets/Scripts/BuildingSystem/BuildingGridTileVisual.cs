@@ -1,31 +1,40 @@
-﻿using Unity.Mathematics;
+﻿using System;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace TinyRTS.BuildSystem
 {
     public class BuildingGridTileVisual : MonoBehaviour
     {
-        BuildingGridTile tile;
+        private BuildingGridTile tile;
+        private MeshRenderer _renderer;
+        private float offset = 0.5f;
+
+        private void Awake()
+        {
+            _renderer = GetComponent<MeshRenderer>();
+        }
 
         public void Initialize(float2 position)
         {
-            tile = new BuildingGridTile(position);
-            transform.position = new Vector3(position.x, 0.09f, position.y);
-            UpdateVisual();
+            tile = BuildingGrid.Instance.GetTile((int)position.x, (int)position.y);
+            if (tile != null)
+            {
+                tile.OnOccupiedChanged += UpdateVisual;
+                UpdateVisual(tile.IsOccupied);
+            }
+            transform.position = new Vector3(position.x + offset, 0.09f, position.y + offset);
         }
 
-        public void UpdateVisual()
+        private void OnDestroy()
         {
-            if (tile.IsOccupied)
-            {
-                // Optionally, change color or appearance to indicate occupation
-                GetComponent<Renderer>().material.color = Color.red;
-            }
-            else
-            {
-                // Reset color or appearance for unoccupied state
-                GetComponent<Renderer>().material.color = Color.green;
-            }
+            if (tile != null)
+                tile.OnOccupiedChanged -= UpdateVisual;
+        }
+
+        private void UpdateVisual(bool isOccupied)
+        {
+            _renderer.material.color = isOccupied ? Color.red : Color.green;
         }
     }
 }

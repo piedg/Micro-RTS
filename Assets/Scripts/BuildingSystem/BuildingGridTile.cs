@@ -12,6 +12,7 @@ namespace TinyRTS.BuildSystem
         
         public float2 Position => position;
         public bool IsOccupied => isOccupied;
+        public event Action<bool> OnOccupiedChanged;
         
         public BuildingGridTile(float2 position)
         {
@@ -22,7 +23,7 @@ namespace TinyRTS.BuildSystem
         public void SetOccupied(bool occupied)
         {
             isOccupied = occupied;
+            OnOccupiedChanged?.Invoke(isOccupied);
         }
-        
     }
 }

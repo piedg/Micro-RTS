@@ -1,5 +1,5 @@
 #define USE_NEW_INPUT_SYSTEM
-using OpenUp.Utils;
+using TinyRTS.Patterns;
 using UnityEngine;
 using UnityEngine.InputSystem;
 

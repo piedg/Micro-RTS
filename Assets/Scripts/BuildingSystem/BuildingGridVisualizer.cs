@@ -1,18 +1,45 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 
-namespace TinyRTS.BuildSystem
+namespace TinyRTS.BuildingSystem
 {
     public class BuildingGridVisualizer : MonoBehaviour
     {
-        [SerializeField] private GameObject gridCellPrefab;
+        [SerializeField] private BuildingGridTileVisual tilePrefab;
+        [SerializeField] List<BuildingGridTileVisual> tileVisuals;
 
-        BuildingGrid _buildingGrid;
-        private void Awake()
+        private void Start()
         {
-            _buildingGrid = GetComponent<BuildingGrid>();
+            for (int i = 0; i < BuildingGrid.Instance.Width; i++)
+            {
+                for (int j = 0; j < BuildingGrid.Instance.Height; j++)
+                {
+                    var tilePosition = new float2(i, j);
+                    var tileVisual = Instantiate(tilePrefab,
+                        new Vector3(tilePosition.x, 1f, tilePosition.y), Quaternion.Euler(90, 0, 0));
+                    tileVisual.GetComponent<BuildingGridTileVisual>().Initialize(tilePosition);
+                    tileVisuals.Add(tileVisual);
+                }
+            }
+            
+            HideTileVisuals();
+        }
+
+        public void ShowTileVisuals()
+        {
+            foreach (var tileVisual in tileVisuals)
+            {
+                tileVisual.gameObject.SetActive(true);
+            }
+        }
+
+        public void HideTileVisuals()
+        {
+            foreach (var tileVisual in tileVisuals)
+            {
+                tileVisual.gameObject.SetActive(false);
+            }
         }
     }
 }

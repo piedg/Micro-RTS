@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace OpenUp.Utils
+namespace TinyRTS.Patterns
 {
     public abstract class MonoSingleton<T> : MonoBehaviour where T : MonoSingleton<T>
     {

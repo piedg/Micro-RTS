@@ -32,7 +32,7 @@ namespace TinyRTS.Inputs
         private void LateUpdate()
         {
             Move();
-            Rotate();
+            //Rotate();
             Zoom();
         }
 

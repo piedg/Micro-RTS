@@ -1,11 +1,13 @@
+using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace TinyRTS.BuildSystem
+namespace TinyRTS.BuildingSystem
 {
     public class BuildingGridVisualizer : MonoBehaviour
     {
         [SerializeField] private BuildingGridTileVisual tilePrefab;
+        [SerializeField] List<BuildingGridTileVisual> tileVisuals;
 
         private void Start()
         {
@@ -17,7 +19,26 @@ namespace TinyRTS.BuildSystem
                     var tileVisual = Instantiate(tilePrefab,
                         new Vector3(tilePosition.x, 1f, tilePosition.y), Quaternion.Euler(90, 0, 0));
                     tileVisual.GetComponent<BuildingGridTileVisual>().Initialize(tilePosition);
+                    tileVisuals.Add(tileVisual);
                 }
+            }
+            
+            HideTileVisuals();
+        }
+
+        public void ShowTileVisuals()
+        {
+            foreach (var tileVisual in tileVisuals)
+            {
+                tileVisual.gameObject.SetActive(true);
+            }
+        }
+
+        public void HideTileVisuals()
+        {
+            foreach (var tileVisual in tileVisuals)
+            {
+                tileVisual.gameObject.SetActive(false);
             }
         }
     }

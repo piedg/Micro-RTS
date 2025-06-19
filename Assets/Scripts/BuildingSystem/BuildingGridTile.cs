@@ -2,28 +2,28 @@
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace TinyRTS.BuildSystem
+namespace TinyRTS.BuildingSystem
 {
     [Serializable]
     public class BuildingGridTile
     {
-        private float2 position;
-        private bool isOccupied;
+        private float2 _position;
+        private bool _isOccupied;
         
-        public float2 Position => position;
-        public bool IsOccupied => isOccupied;
+        public float2 Position => _position;
+        public bool IsOccupied => _isOccupied;
         public event Action<bool> OnOccupiedChanged;
         
         public BuildingGridTile(float2 position)
         {
-            this.position = position;
-            isOccupied = false;
+            this._position = position;
+            _isOccupied = false;
         }
         
         public void SetOccupied(bool occupied)
         {
-            isOccupied = occupied;
-            OnOccupiedChanged?.Invoke(isOccupied);
+            _isOccupied = occupied;
+            OnOccupiedChanged?.Invoke(_isOccupied);
         }
     }
 }

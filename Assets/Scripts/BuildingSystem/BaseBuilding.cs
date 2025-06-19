@@ -1,10 +1,10 @@
 ﻿using UnityEngine;
 
-namespace TinyRTS.BuildSystem
+namespace TinyRTS.BuildingSystem
 {
     public class BaseBuilding : MonoBehaviour
     {
-        [SerializeField] BuildingSO buildingData;
+        [SerializeField] private BuildingSO buildingData;
         public BuildingSO BuildingData => buildingData;
         
     }

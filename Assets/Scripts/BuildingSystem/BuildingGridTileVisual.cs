@@ -1,14 +1,13 @@
-﻿using System;
-using Unity.Mathematics;
+﻿using Unity.Mathematics;
 using UnityEngine;
 
-namespace TinyRTS.BuildSystem
+namespace TinyRTS.BuildingSystem
 {
     public class BuildingGridTileVisual : MonoBehaviour
     {
-        private BuildingGridTile tile;
+        private BuildingGridTile _tile;
         private MeshRenderer _renderer;
-        private float offset = 0.5f;
+        private readonly float _offset = 0.5f;
 
         private void Awake()
         {
@@ -17,19 +16,19 @@ namespace TinyRTS.BuildSystem
 
         public void Initialize(float2 position)
         {
-            tile = BuildingGrid.Instance.GetTile((int)position.x, (int)position.y);
-            if (tile != null)
+            _tile = BuildingGrid.Instance.GetTile((int)position.x, (int)position.y);
+            if (_tile != null)
             {
-                tile.OnOccupiedChanged += UpdateVisual;
-                UpdateVisual(tile.IsOccupied);
+                _tile.OnOccupiedChanged += UpdateVisual;
+                UpdateVisual(_tile.IsOccupied);
             }
-            transform.position = new Vector3(position.x + offset, 0.09f, position.y + offset);
+
+            transform.position = new Vector3(position.x + _offset, 0.09f, position.y + _offset);
         }
 
         private void OnDestroy()
         {
-            if (tile != null)
-                tile.OnOccupiedChanged -= UpdateVisual;
+            _tile.OnOccupiedChanged -= UpdateVisual;
         }
 
         private void UpdateVisual(bool isOccupied)

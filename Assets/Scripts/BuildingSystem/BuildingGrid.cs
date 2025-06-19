@@ -1,10 +1,8 @@
-using System;
-using TinyRTS.Core;
 using TinyRTS.Patterns;
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace TinyRTS.BuildSystem
+namespace TinyRTS.BuildingSystem
 {
     public class BuildingGrid : MonoSingleton<BuildingGrid>
     {
@@ -12,19 +10,16 @@ namespace TinyRTS.BuildSystem
         [field: SerializeField] public int Width { get; private set; }
         [field: SerializeField] public int Height { get; private set; }
 
+        [SerializeField] BuildingGridVisualizer gridVisualizer;
+
         public override void Awake()
         {
             base.Awake();
+            gridVisualizer = GetComponent<BuildingGridVisualizer>();
             Initialize(Width, Height);
         }
 
-        private void Update()
-        {
-            //float3 mousePosition = WorldMouse.Instance.GetPosition();
-            //Debug.Log($"Current Tile {GetTilePos((int)mousePosition.x, (int)mousePosition.z)}");
-        }
-
-        public void Initialize(int width, int height)
+        private void Initialize(int width, int height)
         {
             Width = width;
             Height = height;
@@ -39,20 +34,12 @@ namespace TinyRTS.BuildSystem
             }
         }
 
-        public bool IsTileOccupied(int x, int y)
+        private bool IsTileOccupied(int x, int y)
         {
             if (x < 0 || x >= Width || y < 0 || y >= Height)
                 return false;
 
             return _grid[x, y].IsOccupied;
-        }
-
-        public void SetTileOccupied(int x, int y, bool occupied)
-        {
-            if (x < 0 || x >= Width || y < 0 || y >= Height)
-                return;
-
-            _grid[x, y].SetOccupied(occupied);
         }
 
         public BuildingGridTile GetTile(int x, int y)
@@ -71,7 +58,6 @@ namespace TinyRTS.BuildSystem
                 return float2.zero;
             }
 
-
             return _grid[x, y].Position;
         }
 
@@ -82,11 +68,11 @@ namespace TinyRTS.BuildSystem
                 return false;
             }
 
-            for (int i = 0; i < buildingWidth; i++)
+            for (int xx = 0; xx < buildingWidth; xx++)
             {
-                for (int j = 0; j < buildingHeight; j++)
+                for (int yy = 0; yy < buildingHeight; yy++)
                 {
-                    if (IsTileOccupied(x + i, y + j))
+                    if (IsTileOccupied(x + xx, y + yy))
                         return false;
                 }
             }
@@ -97,6 +83,16 @@ namespace TinyRTS.BuildSystem
         private bool IsBoundary(int x, int y)
         {
             return x < 0 || x >= Width || y < 0 || y >= Height;
+        }
+
+        public void ShowTiles()
+        {
+            gridVisualizer.ShowTileVisuals();
+        }
+
+        public void HideTiles()
+        {
+            gridVisualizer.HideTileVisuals();
         }
     }
 }

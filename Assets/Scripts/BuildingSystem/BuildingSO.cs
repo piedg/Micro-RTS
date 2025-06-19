@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace TinyRTS.BuildSystem
+namespace TinyRTS.BuildingSystem
 {
     [CreateAssetMenu(fileName = "New Building", menuName = "Building System/Building")]
     public class BuildingSO : ScriptableObject

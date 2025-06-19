@@ -1,18 +1,28 @@
-﻿using Unity.Mathematics;
+﻿using System;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace TinyRTS.BuildSystem
 {
+    [Serializable]
     public class BuildingGridTile
     {
-        [SerializeField] private float2 position;
-        public float2 Position => position;
-        public bool isOccupied;
+        private float2 position;
+        private bool isOccupied;
         
-        public BuildingGridTile(float x, float y)
+        public float2 Position => position;
+        public bool IsOccupied => isOccupied;
+        
+        public BuildingGridTile(float2 position)
         {
-            position = new float2(x, y);
+            this.position = position;
             isOccupied = false;
         }
+        
+        public void SetOccupied(bool occupied)
+        {
+            isOccupied = occupied;
+        }
+        
     }
 }

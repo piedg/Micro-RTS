@@ -6,6 +6,7 @@ namespace TinyRTS.BuildSystem
     public class BuildingSO : ScriptableObject
     {
         public GameObject prefab;
+        public GameObject previewPrefab;
         public string buildingName;
         public int width = 1;
         public int height = 1;

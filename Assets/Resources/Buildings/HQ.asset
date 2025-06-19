@@ -12,10 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa601a5080b94078ae3f8bbde35a1ed2, type: 3}
   m_Name: HQ
   m_EditorClassIdentifier: 
-  prefab: {fileID: 0}
+  prefab: {fileID: 3428654465289851525, guid: 5c770e90211e02749beb26d31bf02d06, type: 3}
+  previewPrefab: {fileID: 3428654465289851525, guid: eea9794e52315e74c9bd55fc411b0b79,
+    type: 3}
   buildingName: Head Quarter
-  width: 5
-  height: 5
+  width: 2
+  height: 2
   cost: 100
   buildTime: 5
   description: 

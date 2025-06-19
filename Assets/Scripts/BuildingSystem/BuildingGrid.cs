@@ -5,79 +5,95 @@ using UnityEngine;
 
 public class BuildingGrid : MonoSingleton<BuildingGrid>
 {
-    [SerializeField] private int gridWidth = 10;
-    [SerializeField] private int gridHeight = 10;
-    [SerializeField] private float cellSize = 1.0f;
-
-    public int GridWidth => gridWidth;
-
-    public int GridHeight => gridHeight;
-
-    public float CellSize => cellSize;
-
     private BuildingGridTile[,] _grid;
+    public int Width { get; private set; }
+    public int Height { get; private set; }
 
-    private void Awake()
+    public override void Awake()
     {
-        InitializeGrid();
+        base.Awake();
+        Initialize(10, 10);
     }
 
-    private void InitializeGrid()
+    public void Initialize(int width, int height)
     {
-        _grid = new BuildingGridTile[gridWidth, gridHeight];
-        for (var x = 0; x < gridWidth; x++)
+        Width = width;
+        Height = height;
+        _grid = new BuildingGridTile[width, height];
+
+        for (int x = 0; x < width; x++)
         {
-            for (var y = 0; y < gridHeight; y++)
+            for (int y = 0; y < height; y++)
             {
-                _grid[x, y] = new BuildingGridTile(x * cellSize, y * cellSize);
+                _grid[x, y] = new BuildingGridTile(new float2(x, y));
             }
         }
     }
 
-    public float3 GetCellPosition(float2 position)
+    public bool IsTileOccupied(int x, int y)
     {
-        if (position.x < 0 || position.x >= gridWidth || position.y < 0 || position.y >= gridHeight)
-        {
-            Debug.LogError("Grid position out of bounds");
-            return float3.zero;
-        }
+        if (x < 0 || x >= Width || y < 0 || y >= Height)
+            return false;
 
-        int x = Mathf.FloorToInt(position.x);
-        int y = Mathf.FloorToInt(position.y);
+        return _grid[x, y].IsOccupied;
+    }
+
+    public void SetTileOccupied(int x, int y, bool occupied)
+    {
+        if (x < 0 || x >= Width || y < 0 || y >= Height)
+            return;
+
+        _grid[x, y].SetOccupied(occupied);
+    }
+
+    public BuildingGridTile GetTile(int x, int y)
+    {
+        if (x < 0 || x >= Width || y < 0 || y >= Height)
+            return null;
 
         return _grid[x, y];
     }
 
-    public float3 GetCellsPosition(float2[,] positions)
+    public bool CanPlaceBuilding(int x, int y, int buildingWidth, int buildingHeight)
     {
-        if (positions.GetLength(0) != positions.GetLength(1))
+        if (IsBoundary(x, y) || IsBoundary(x + buildingWidth - 1, y + buildingHeight - 1))
         {
-            Debug.LogError("Array positions must be square");
-            return float3.zero;
-        }
-
-        float3[] positionsArray = new float3[positions.GetLength(0)];
-        for (int i = 0; i < positions.GetLength(0); i++)
-        {
-            positionsArray[i] = GetCellPosition(positions[i, 0]);
-        }
-
-        return positionsArray.Length > 0 ? positionsArray[0] : float3.zero;
-    }
-    
-    public bool IsCellOccupied(float2 position)
-    {
-        if (position.x < 0 || position.x >= gridWidth || position.y < 0 || position.y >= gridHeight)
-        {
-            Debug.LogError("Grid position out of bounds");
             return false;
         }
 
-        int x = Mathf.FloorToInt(position.x);
-        int y = Mathf.FloorToInt(position.y);
+        for (int i = 0; i < buildingWidth; i++)
+        {
+            for (int j = 0; j < buildingHeight; j++)
+            {
+                if (IsTileOccupied(x + i, y + j))
+                    return false;
+            }
+        }
 
-        // Here you would check if the cell is occupied by a building or not.
-        // For now, we assume all cells are free.
-        return false; // Replace with actual logic to check occupancy
+        return true;
+    }
+
+    private bool IsBoundary(int x, int y)
+    {
+        return x < 0 || x >= Width || y < 0 || y >= Height;
+    }
+
+    public void UpdateGrid()
+    {
+        for (int i = 0; i < BuildingGrid.Instance.Width; i++)
+        {
+            for (int j = 0; j < BuildingGrid.Instance.Height; j++)
+            {
+                var tile = BuildingGrid.Instance.GetTile(i, j);
+                if (tile != null)
+                {
+                    var tileVisual = FindObjectOfType<BuildingGridTileVisual>();
+                    if (tileVisual != null)
+                    {
+                        tileVisual.UpdateVisual();
+                    }
+                }
+            }
+        }
     }
 }

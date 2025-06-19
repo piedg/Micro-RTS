@@ -1,95 +1,76 @@
-﻿using Unity.Mathematics;
+﻿using System;
+using TinyRTS.Core;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace TinyRTS.BuildSystem
 {
     public class Builder : MonoBehaviour
     {
-        [SerializeField] private BaseBuilding currentBuilding;
-        
-        void Update()
+        [SerializeField] BaseBuilding _currentBuilding;
+        private Transform _currentBuildingPreview;
+
+        private void Update()
         {
-            if (Input.GetMouseButtonDown(0))
+            if (_currentBuilding)
             {
-                PlaceBuilding();
-            }
-        }
-        
-        private void PlaceBuilding()
-        {
-            if (currentBuilding)
-            {
-                Debug.LogWarning("No building selected to place.");
-                return;
+                SelectBuilding();
             }
 
-            // Assuming you have a method to get the position where the building should be placed
-            Vector3 placementPosition = GetPlacementPosition();
+            if (_currentBuildingPreview)
+            {
+                _currentBuildingPreview.position = WorldMouse.Instance.GetPosition();
+            }
 
-            // Instantiate the building at the specified position
-            Instantiate(currentBuilding, placementPosition, Quaternion.identity);
-        }
-        private Vector3 GetPlacementPosition()
-        {
-            // This method should return the position where the building will be placed.
-            // For now, we can return a fixed position or use raycasting to find a valid position.
-            // Here, we just return the origin for simplicity.
-            return Vector3.zero; // Replace with actual logic to determine placement position
-        }
-        
-        private bool TryToPlaceBuilding(float2 position)
-        {
-            if(BuildingGrid.Instance.GetCellPosition(position) == null)
+            if (Input.GetKeyDown(KeyCode.Space))
             {
-                Debug.LogWarning("Invalid position for building placement.");
-                return false;
-            }
-            // Implement logic to check if the building can be placed at the given position
-            // This could involve checking for collisions, grid alignment, etc.
-            // For now, we assume placement is always valid.
-            return true; // Replace with actual validation logic
-        }
-        public void SetCurrentBuilding(BaseBuilding building)
-        {
-            currentBuilding = building;
-        }
-        public BaseBuilding GetCurrentBuilding()
-        {
-            return currentBuilding;
-        }
-        private void OnDrawGizmos()
-        {
-            if (currentBuilding != null)
-            {
-                Gizmos.color = Color.green;
-                Gizmos.DrawWireCube(GetPlacementPosition(), new Vector3(1, 1, 1)); // Adjust size as needed
+                Build();
             }
         }
-        private void OnValidate()
+
+        public void Build()
         {
-            if (currentBuilding == null)
+            if (BuildingGrid.Instance.CanPlaceBuilding(
+                    (int)WorldMouse.Instance.GetPosition().x,
+                    (int)WorldMouse.Instance.GetPosition().y,
+                    _currentBuilding.BuildingData.width,
+                    _currentBuilding.BuildingData.height))
             {
-                Debug.LogWarning("Current building is not set in the Builder component.");
-            }
-        }
-        private void Reset()
-        {
-            // Automatically set the current building to a default building if none is set
-            if (currentBuilding == null)
-            {
-                currentBuilding = FindObjectOfType<BaseBuilding>();
-                if (currentBuilding != null)
+                Destroy(_currentBuildingPreview.gameObject);
+                Instantiate(_currentBuilding.gameObject,
+                    WorldMouse.Instance.GetPosition(),
+                    Quaternion.identity);
+
+                for (int i = 0; i < _currentBuilding.BuildingData.width; i++)
                 {
-                    Debug.Log("Default building set in Builder component.");
+                    for (int j = 0; j < _currentBuilding.BuildingData.height; j++)
+                    {
+                        BuildingGrid.Instance.SetTileOccupied(i, j, true);
+                    }
                 }
-                else
+
+
+                BuildingGrid.Instance.UpdateGrid();
+                _currentBuildingPreview = null;
+                // _currentBuilding = null;
+            }
+            else
+            {
+                Debug.Log("Cannot place building here.");
+            }
+        }
+
+        public void SelectBuilding()
+        {
+            if (Input.GetKeyDown(KeyCode.B))
+            {
+                if (!_currentBuildingPreview)
                 {
-                    Debug.LogWarning("No BaseBuilding found in the scene to set as default.");
+                    _currentBuildingPreview = Instantiate(_currentBuilding.BuildingData.previewPrefab,
+                        WorldMouse.Instance.GetPosition(),
+                        Quaternion.identity).transform;
                 }
             }
         }
-        
-        
     }
-    
 }

@@ -9,7 +9,7 @@ namespace TinyRTS.BuildingSystem
     {
         [SerializeField] private BuildingGridTileVisual tilePrefab;
         [SerializeField] List<BuildingGridTileVisual> tileVisuals;
-        [SerializeField] LayerMask layerMask ;
+        [SerializeField] LayerMask layerMask;
         private readonly int _activeTilesRange = 15;
 
         private void Start()
@@ -21,14 +21,15 @@ namespace TinyRTS.BuildingSystem
                     var tilePosition = new float2(x, y);
                     var tileVisual = Instantiate(tilePrefab,
                         new Vector3(tilePosition.x, 1f, tilePosition.y), Quaternion.Euler(90, 0, 0));
-                    tileVisual.GetComponent<BuildingGridTileVisual>().Initialize(tilePosition);
-                    tileVisuals.Add(tileVisual);
+
+                    if (tileVisual.TryGetComponent(out BuildingGridTileVisual buildingGridTileVisual))
+                    {
+                        buildingGridTileVisual.Initialize(tilePosition);
+                        tileVisuals.Add(tileVisual);
+                    }
 
                     var tile = BuildingGrid.Instance.GetTile(x, y);
-
-                    var hasCollider = Physics.OverlapBox(new Vector3(tilePosition.x, 0f, tilePosition.y),
-                        tileVisual.transform.localScale, tileVisual.transform.localRotation, layerMask).Length > 0;
-                    tile.SetOccupied(hasCollider);
+                    CheckForColliders(tile, tileVisual);
                 }
             }
 
@@ -66,6 +67,25 @@ namespace TinyRTS.BuildingSystem
             {
                 tileVisual.gameObject.SetActive(false);
             }
+        }
+
+        public void UpdateGrid()
+        {
+            foreach (var tileVisual in tileVisuals)
+            {
+                var tile = tileVisual.Tile;
+                if (tile != null)
+                {
+                    CheckForColliders(tile, tileVisual);
+                }
+            }
+        }
+
+        private void CheckForColliders(BuildingGridTile tile, BuildingGridTileVisual tileVisual)
+        {
+            var hasCollider = Physics.OverlapBox(new Vector3(tile.Position.x, 0f, tile.Position.y),
+                tileVisual.transform.localScale, tileVisual.transform.localRotation, layerMask).Length > 0;
+            tile.SetOccupied(hasCollider);
         }
     }
 }

@@ -66,6 +66,11 @@ namespace TinyRTS.Unit
 
         private void SelectUnits()
         {
+            if (_unitSelection.PlayerUnits.Count == 0)
+            {
+                return;
+            }
+
             _unitSelection.ClearSelection();
 
             Vector2 screenStart;

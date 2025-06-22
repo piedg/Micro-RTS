@@ -8,8 +8,7 @@ namespace TinyRTS.Unit
 {
     public class UnitController : MonoSingleton<UnitController>
     {
-        [SerializeField]
-        private List<BaseUnit> _playerUnits = new List<BaseUnit>();
+        [SerializeField] private List<BaseUnit> _playerUnits = new List<BaseUnit>();
 
         public List<BaseUnit> PlayerUnits => _playerUnits;
 
@@ -17,57 +16,69 @@ namespace TinyRTS.Unit
 
         void Update()
         {
-            if (InputManager.Instance.IsMouseLeftButtonDown())
+            var mouseRay = Camera.main.ScreenPointToRay(InputManager.Instance.GetMouseScreenPosition());
+            if (Physics.Raycast(mouseRay, out RaycastHit hit))
             {
-                TrySelectUnit();
-            }
-
-            if (InputManager.Instance.IsMouseRightButton())
-            {
-                TryMoveSelectedUnits();
-            }
-        }
-
-        private void TrySelectUnit()
-        {
-            Ray ray = Camera.main.ScreenPointToRay(InputManager.Instance.GetMouseScreenPosition());
-            if (Physics.Raycast(ray, out RaycastHit hit))
-            {
-                if (hit.collider.TryGetComponent(out BaseUnit unit))
+                if (InputManager.Instance.IsMouseLeftButtonDown())
                 {
-                    if (unit)
+                    TrySelectUnit(hit);
+                }
+
+                if (InputManager.Instance.IsMouseRightButton())
+                {
+                    if (hit.collider.TryGetComponent(out BaseResource gatherable))
                     {
-                        ClearSelection();
-                        _selectedUnits.Add(unit);
-                        unit.Select();
+                        TryGatherResources(gatherable);
                     }
                     else
                     {
-                        ClearSelection();
+                        TryMoveSelectedUnits(hit);
                     }
                 }
             }
         }
 
-        private void TryMoveSelectedUnits()
+        private void TrySelectUnit(RaycastHit hit)
         {
-            Ray ray = Camera.main.ScreenPointToRay(InputManager.Instance.GetMouseScreenPosition());
-            if (Physics.Raycast(ray, out RaycastHit hit))
+            if (hit.collider.TryGetComponent(out BaseUnit unit))
             {
-                int unitsPerRow = Mathf.CeilToInt(Mathf.Sqrt(_selectedUnits.Count));
-                float spacing = 2.0f;
-                int index = 0;
-
-                foreach (BaseUnit unit in _selectedUnits)
+                ClearSelection();
+                if (unit)
                 {
-                    int row = index / unitsPerRow;
-                    int col = index % unitsPerRow;
+                    _selectedUnits.Add(unit);
+                    unit.Select();
+                }
+            }
+        }
 
-                    Vector3 offset = new Vector3(col * spacing, 0, row * spacing);
-                    Vector3 targetPosition = hit.point + offset;
+        private void TryMoveSelectedUnits(RaycastHit hit)
+        {
+            int unitsPerRow = Mathf.CeilToInt(Mathf.Sqrt(_selectedUnits.Count));
+            float spacing = 2.0f;
+            int index = 0;
 
-                    unit.MoveTo(targetPosition);
-                    index++;
+            foreach (BaseUnit unit in _selectedUnits)
+            {
+                unit.CancelAction();
+                int row = index / unitsPerRow;
+                int col = index % unitsPerRow;
+
+                Vector3 offset = new Vector3(col * spacing, 0, row * spacing);
+                Vector3 targetPosition = hit.point + offset;
+
+                unit.MoveTo(targetPosition);
+                index++;
+            }
+        }
+
+        private void TryGatherResources(BaseResource gatherable)
+        {
+            foreach (BaseUnit unit in _selectedUnits)
+            {
+                unit.CancelAction();
+                if (unit is WorkerUnit worker)
+                {
+                    worker.StartGathering(gatherable);
                 }
             }
         }
@@ -96,6 +107,7 @@ namespace TinyRTS.Unit
             {
                 unit.Deselect();
             }
+
             _selectedUnits.Clear();
         }
 

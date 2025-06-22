@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TinyRTS.Core;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -8,21 +9,29 @@ namespace TinyRTS.BuildingSystem
     {
         [SerializeField] private BuildingGridTileVisual tilePrefab;
         [SerializeField] List<BuildingGridTileVisual> tileVisuals;
+        [SerializeField] LayerMask layerMask ;
+        private readonly int _activeTilesRange = 15;
 
         private void Start()
         {
-            for (int i = 0; i < BuildingGrid.Instance.Width; i++)
+            for (var x = 0; x < BuildingGrid.Instance.Width; x++)
             {
-                for (int j = 0; j < BuildingGrid.Instance.Height; j++)
+                for (var y = 0; y < BuildingGrid.Instance.Height; y++)
                 {
-                    var tilePosition = new float2(i, j);
+                    var tilePosition = new float2(x, y);
                     var tileVisual = Instantiate(tilePrefab,
                         new Vector3(tilePosition.x, 1f, tilePosition.y), Quaternion.Euler(90, 0, 0));
                     tileVisual.GetComponent<BuildingGridTileVisual>().Initialize(tilePosition);
                     tileVisuals.Add(tileVisual);
+
+                    var tile = BuildingGrid.Instance.GetTile(x, y);
+
+                    var hasCollider = Physics.OverlapBox(new Vector3(tilePosition.x, 0f, tilePosition.y),
+                        tileVisual.transform.localScale, tileVisual.transform.localRotation, layerMask).Length > 0;
+                    tile.SetOccupied(hasCollider);
                 }
             }
-            
+
             HideTileVisuals();
         }
 
@@ -31,6 +40,23 @@ namespace TinyRTS.BuildingSystem
             foreach (var tileVisual in tileVisuals)
             {
                 tileVisual.gameObject.SetActive(true);
+            }
+        }
+
+        public void ShowTilesInRange()
+        {
+            float3 mouseWorldPos = WorldMouse.Instance.GetPosition();
+
+            var mouseTileX = math.round(mouseWorldPos.x);
+            var mouseTileY = math.round(mouseWorldPos.z);
+
+            foreach (var tileVisual in tileVisuals)
+            {
+                float2 tilePos = tileVisual.Tile.Position;
+
+                var dist = math.distancesq(new float2(mouseTileX, mouseTileY), tilePos);
+
+                tileVisual.gameObject.SetActive(dist <= _activeTilesRange * _activeTilesRange);
             }
         }
 

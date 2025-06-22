@@ -15,33 +15,34 @@ namespace TinyRTS.BuildingSystem
         private Transform _currentBuildingPreview;
         private const float BUILDING_POS_OFFSET = 0f;
 
-        bool isBuildingModeOn = false;
+        bool _isBuildingMode = false;
 
         private void Update()
         {
             if (Input.GetKeyDown(KeyCode.Alpha1))
             {
                 CancelBuildingMode();
-                isBuildingModeOn = true;
+                _isBuildingMode = true;
                 _currentBuilding = hq;
             }
 
             if (Input.GetKeyDown(KeyCode.Alpha2))
             {
                 CancelBuildingMode();
-                isBuildingModeOn = true;
+                _isBuildingMode = true;
                 _currentBuilding = barrack;
             }
 
             if (Input.GetKeyDown(KeyCode.Alpha3))
             {
                 CancelBuildingMode();
-                isBuildingModeOn = true;
+                _isBuildingMode = true;
                 _currentBuilding = treeFactory;
             }
 
-            if (isBuildingModeOn)
+            if (_isBuildingMode)
             {
+                BuildingGrid.Instance.ShowTilesInRange();
                 if (_currentBuilding)
                 {
                     SelectBuilding(_currentBuilding);
@@ -54,10 +55,11 @@ namespace TinyRTS.BuildingSystem
                     var snappedPosition = BuildingGrid.Instance.GetTilePos((int)gridX, (int)gridY);
                     var width = _currentBuilding.BuildingData.width;
                     var height = _currentBuilding.BuildingData.height;
+                    
                     _currentBuildingPreview.position = new Vector3(
                         snappedPosition.x + (width / 2),
                         0f,
-                        snappedPosition.y + (width / 2));
+                        snappedPosition.y + (height / 2));
                 }
 
                 if (InputManager.Instance.IsMouseLeftButtonDown())
@@ -74,7 +76,7 @@ namespace TinyRTS.BuildingSystem
 
         private void CancelBuildingMode()
         {
-            isBuildingModeOn = false;
+            _isBuildingMode = false;
             if (_currentBuildingPreview)
             {
                 Destroy(_currentBuildingPreview.gameObject);
@@ -115,7 +117,7 @@ namespace TinyRTS.BuildingSystem
                         placeY + (height / 2)),
                     Quaternion.identity);
 
-                isBuildingModeOn = false;
+                _isBuildingMode = false;
                 Destroy(_currentBuildingPreview.gameObject);
                 _currentBuildingPreview = null;
                 BuildingGrid.Instance.HideTiles();
@@ -130,7 +132,7 @@ namespace TinyRTS.BuildingSystem
         {
             if (!_currentBuildingPreview)
             {
-                BuildingGrid.Instance.ShowTiles();
+                //BuildingGrid.Instance.ShowTiles();
                 int gridX = Mathf.FloorToInt(WorldMouse.Instance.GetPosition().x);
                 int gridY = Mathf.FloorToInt(WorldMouse.Instance.GetPosition().z);
                 var snappedPosition = BuildingGrid.Instance.GetTilePos(gridX, gridY);

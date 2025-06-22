@@ -12,11 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa601a5080b94078ae3f8bbde35a1ed2, type: 3}
   m_Name: TreeFactory
   m_EditorClassIdentifier: 
-  prefab: {fileID: 0}
-  previewPrefab: {fileID: 0}
+  prefab: {fileID: 135906699579856451, guid: a791e04abce48f44b9a0239098bccb57, type: 3}
+  previewPrefab: {fileID: 135906699579856451, guid: 634a35725bcd95841b522ad2a7f2e0a4,
+    type: 3}
   buildingName: 
-  width: 1
-  height: 1
+  width: 6
+  height: 2
   cost: 100
   buildTime: 5
   description: 

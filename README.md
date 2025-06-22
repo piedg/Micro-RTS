@@ -15,10 +15,9 @@
 - 
 # Building System
 Custom grid-based building system
-![Unity_lKdZSKkp6W](https://github.com/user-attachments/assets/59e09f2e-340c-4a0b-a437-891015aacb33)
+![Unity_lKdZSKkp6W](https://github.com/user-attachments/assets/cbbb72f5-55a8-434b-8623-25e6690bc845)
 
 
-# Unit selection
+# Unit Selection
 Unit selection using rect-box and navmesh for moving 
-![Unity_1nWt3ke5Fc](https://github.com/user-attachments/assets/eb8434af-e215-4b8a-8c91-6bfb7cef6b0e)
-
+![Unity_aLyfoIPb8F](https://github.com/user-attachments/assets/6f034f22-f7d9-456f-acb5-273fd7c829f5)

@@ -6,6 +6,9 @@ namespace TinyRTS.BuildingSystem
     public class BuildingGridTileVisual : MonoBehaviour
     {
         private BuildingGridTile _tile;
+
+        public BuildingGridTile Tile => _tile;
+
         private MeshRenderer _renderer;
         private readonly float _offset = 0.5f;
 

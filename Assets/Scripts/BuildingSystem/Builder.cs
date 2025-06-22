@@ -1,4 +1,5 @@
 ﻿using TinyRTS.Core;
+using TinyRTS.Inputs;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -7,41 +8,75 @@ namespace TinyRTS.BuildingSystem
     public class Builder : MonoBehaviour
     {
         [SerializeField] BaseBuilding _currentBuilding;
+        [SerializeField] BaseBuilding barrack;
+        [SerializeField] BaseBuilding hq;
+        [SerializeField] BaseBuilding treeFactory;
+
         private Transform _currentBuildingPreview;
-        private const float BUILDING_POS_OFFSET = 1f;
+        private const float BUILDING_POS_OFFSET = 0f;
+
+        bool _isBuildingMode = false;
 
         private void Update()
         {
-            if (_currentBuilding)
-            {
-                SelectBuilding();
-            }
-
-            if (_currentBuildingPreview)
-            {
-                var snappedPosition = BuildingGrid.Instance.GetTilePos(
-                    Mathf.FloorToInt(WorldMouse.Instance.GetPosition().x ),
-                    Mathf.FloorToInt(WorldMouse.Instance.GetPosition().z));
-                
-                _currentBuildingPreview.position = new Vector3(
-                    snappedPosition.x + BUILDING_POS_OFFSET, 
-                    0f, 
-                    snappedPosition.y + BUILDING_POS_OFFSET);
-            }
-
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                Build();
-            }
-            
-            if (Input.GetKeyDown(KeyCode.X))
+            if (Input.GetKeyDown(KeyCode.Alpha1))
             {
                 CancelBuildingMode();
+                _isBuildingMode = true;
+                _currentBuilding = hq;
+            }
+
+            if (Input.GetKeyDown(KeyCode.Alpha2))
+            {
+                CancelBuildingMode();
+                _isBuildingMode = true;
+                _currentBuilding = barrack;
+            }
+
+            if (Input.GetKeyDown(KeyCode.Alpha3))
+            {
+                CancelBuildingMode();
+                _isBuildingMode = true;
+                _currentBuilding = treeFactory;
+            }
+
+            if (_isBuildingMode)
+            {
+                BuildingGrid.Instance.ShowTilesInRange();
+                if (_currentBuilding)
+                {
+                    SelectBuilding(_currentBuilding);
+                }
+
+                if (_currentBuildingPreview)
+                {
+                    var gridX = math.floor(WorldMouse.Instance.GetPosition().x);
+                    var gridY = math.floor(WorldMouse.Instance.GetPosition().z);
+                    var snappedPosition = BuildingGrid.Instance.GetTilePos((int)gridX, (int)gridY);
+                    var width = _currentBuilding.BuildingData.width;
+                    var height = _currentBuilding.BuildingData.height;
+                    
+                    _currentBuildingPreview.position = new Vector3(
+                        snappedPosition.x + (width / 2),
+                        0f,
+                        snappedPosition.y + (height / 2));
+                }
+
+                if (InputManager.Instance.IsMouseLeftButtonDown())
+                {
+                    Build();
+                }
+
+                if (InputManager.Instance.IsMouseRightButton())
+                {
+                    CancelBuildingMode();
+                }
             }
         }
 
         private void CancelBuildingMode()
         {
+            _isBuildingMode = false;
             if (_currentBuildingPreview)
             {
                 Destroy(_currentBuildingPreview.gameObject);
@@ -54,38 +89,38 @@ namespace TinyRTS.BuildingSystem
 
         public void Build()
         {
-            var startX = (int)math.floor(WorldMouse.Instance.GetPosition().x);
-            var startY = (int)math.floor(WorldMouse.Instance.GetPosition().z);
-            
+            int gridX = Mathf.FloorToInt(WorldMouse.Instance.GetPosition().x);
+            int gridY = Mathf.FloorToInt(WorldMouse.Instance.GetPosition().z);
+
             var width = _currentBuilding.BuildingData.width;
             var height = _currentBuilding.BuildingData.height;
 
-            if (BuildingGrid.Instance.CanPlaceBuilding(startX, startY, width, height))
+            if (BuildingGrid.Instance.CanPlaceBuilding(gridX, gridY, width, height))
             {
-                for (int x = 0; x < width; x++)
+                for (var x = 0; x < width; x++)
                 {
-                    for (int y = 0; y < height; y++)
+                    for (var y = 0; y < height; y++)
                     {
-                        var tile = BuildingGrid.Instance.GetTile(startX + x, startY + y);
+                        var tile = BuildingGrid.Instance.GetTile(gridX + x, gridY + y);
                         tile.SetOccupied(true);
                     }
                 }
 
-                var placePosition = BuildingGrid.Instance.GetTilePos(startX, startY);
+                var placeX = Mathf.FloorToInt(WorldMouse.Instance.GetPosition().x);
+                var placeY = Mathf.FloorToInt(WorldMouse.Instance.GetPosition().z);
+                var snappedPosition = BuildingGrid.Instance.GetTilePos(gridX, gridY);
 
-                Destroy(_currentBuildingPreview.gameObject);
-                
                 GameObject buildingInstance = Instantiate(_currentBuilding.gameObject,
                     new Vector3(
-                        placePosition.x + BUILDING_POS_OFFSET, 
-                        0f, 
-                        placePosition.y + BUILDING_POS_OFFSET),
+                        placeX + (width / 2),
+                        0f,
+                        placeY + (height / 2)),
                     Quaternion.identity);
-                
-                
-                BuildingGrid.Instance.HideTiles();
+
+                _isBuildingMode = false;
+                Destroy(_currentBuildingPreview.gameObject);
                 _currentBuildingPreview = null;
-                //_currentBuilding = null;
+                BuildingGrid.Instance.HideTiles();
             }
             else
             {
@@ -93,17 +128,18 @@ namespace TinyRTS.BuildingSystem
             }
         }
 
-        public void SelectBuilding()
+        public void SelectBuilding(BaseBuilding buildingToBuild)
         {
-            if (Input.GetKeyDown(KeyCode.B))
+            if (!_currentBuildingPreview)
             {
-                if (!_currentBuildingPreview)
-                {
-                    BuildingGrid.Instance.ShowTiles();
-                    _currentBuildingPreview = Instantiate(_currentBuilding.BuildingData.previewPrefab,
-                        WorldMouse.Instance.GetPosition(),
-                        Quaternion.identity).transform;
-                }
+                //BuildingGrid.Instance.ShowTiles();
+                int gridX = Mathf.FloorToInt(WorldMouse.Instance.GetPosition().x);
+                int gridY = Mathf.FloorToInt(WorldMouse.Instance.GetPosition().z);
+                var snappedPosition = BuildingGrid.Instance.GetTilePos(gridX, gridY);
+
+                _currentBuildingPreview = Instantiate(buildingToBuild.BuildingData.previewPrefab,
+                    new Vector3(snappedPosition.x + BUILDING_POS_OFFSET, 0f, snappedPosition.y + BUILDING_POS_OFFSET),
+                    Quaternion.identity).transform;
             }
         }
     }

@@ -89,6 +89,11 @@ namespace TinyRTS.BuildingSystem
         {
             gridVisualizer.ShowTileVisuals();
         }
+        
+        public void ShowTilesInRange()
+        {
+            gridVisualizer.ShowTilesInRange();
+        }
 
         public void HideTiles()
         {

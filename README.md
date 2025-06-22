@@ -12,7 +12,7 @@
 - Unit recruitment
 - Win-Lose Condition
 - Enemy AI
-- 
+
 # Building System
 Custom grid-based building system
 ![Unity_lKdZSKkp6W](https://github.com/user-attachments/assets/cbbb72f5-55a8-434b-8623-25e6690bc845)

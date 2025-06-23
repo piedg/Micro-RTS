@@ -12,6 +12,8 @@ namespace TinyRTS.Unit
             Gold,
         }
 
+        public int width = 1;
+        public int height = 1;
         public string resourceName;
         public int startingValue = 100;
         public ResourceType type;

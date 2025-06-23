@@ -41,6 +41,12 @@ namespace TinyRTS.Unit
 
             _agent.SetDestination(targetPosition);
         }
+        
+        public void StopMovement()
+        {
+            _agent.isStopped = true;
+            _agent.ResetPath();
+        }
 
         public virtual void CancelAction()
         {

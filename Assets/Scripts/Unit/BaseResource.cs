@@ -1,5 +1,4 @@
-﻿using System;
-using TinyRTS.BuildingSystem;
+﻿using TinyRTS.BuildingSystem;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -9,17 +8,10 @@ namespace TinyRTS.Unit
     {
         [SerializeField] ResourceSO resourceData;
 
-        private Collider _collider;
         private int _startingValue;
         private int _currentValue;
 
         public bool IsDepleted => _currentValue <= 0;
-
-
-        private void Awake()
-        {
-            _collider = GetComponent<Collider>();
-        }
 
         private void Start()
         {

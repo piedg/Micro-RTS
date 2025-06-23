@@ -55,7 +55,7 @@ namespace TinyRTS.BuildingSystem
                     var snappedPosition = BuildingGrid.Instance.GetTilePos((int)gridX, (int)gridY);
                     var width = _currentBuilding.BuildingData.width;
                     var height = _currentBuilding.BuildingData.height;
-                    
+
                     _currentBuildingPreview.position = new Vector3(
                         snappedPosition.x + (width / 2),
                         0f,

@@ -32,7 +32,7 @@ namespace TinyRTS.Unit
             _selectorImage.enabled = false;
         }
 
-        public void MoveTo(Vector3 targetPosition)
+        public void MoveTo(float3 targetPosition)
         {
             if (math.distancesq(transform.position, targetPosition) < _acceptanceRadius * _acceptanceRadius)
             {

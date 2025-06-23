@@ -55,7 +55,7 @@ namespace TinyRTS.BuildingSystem
                     var snappedPosition = BuildingGrid.Instance.GetTilePos((int)gridX, (int)gridY);
                     var width = _currentBuilding.BuildingData.width;
                     var height = _currentBuilding.BuildingData.height;
-                    
+
                     _currentBuildingPreview.position = new Vector3(
                         snappedPosition.x + (width / 2),
                         0f,
@@ -89,8 +89,8 @@ namespace TinyRTS.BuildingSystem
 
         public void Build()
         {
-            int gridX = Mathf.FloorToInt(WorldMouse.Instance.GetPosition().x);
-            int gridY = Mathf.FloorToInt(WorldMouse.Instance.GetPosition().z);
+            var gridX = (int)math.floor(WorldMouse.Instance.GetPosition().x);
+            var gridY = (int)math.floor(WorldMouse.Instance.GetPosition().z);
 
             var width = _currentBuilding.BuildingData.width;
             var height = _currentBuilding.BuildingData.height;
@@ -106,8 +106,8 @@ namespace TinyRTS.BuildingSystem
                     }
                 }
 
-                var placeX = Mathf.FloorToInt(WorldMouse.Instance.GetPosition().x);
-                var placeY = Mathf.FloorToInt(WorldMouse.Instance.GetPosition().z);
+                var placeX = (int)math.floor(WorldMouse.Instance.GetPosition().x);
+                var placeY = (int)math.floor(WorldMouse.Instance.GetPosition().z);
                 var snappedPosition = BuildingGrid.Instance.GetTilePos(gridX, gridY);
 
                 GameObject buildingInstance = Instantiate(_currentBuilding.gameObject,

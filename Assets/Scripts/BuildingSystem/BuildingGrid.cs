@@ -90,6 +90,18 @@ namespace TinyRTS.BuildingSystem
             gridVisualizer.ShowTileVisuals();
         }
 
+        public void ClearTiles(int startPos, int endPos, int width, int height)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    var tile = GetTile(startPos + x, endPos + y);
+                    tile.SetOccupied(false);
+                }
+            }
+        }
+
         public void ShowTilesInRange()
         {
             gridVisualizer.ShowTilesInRange();
@@ -98,11 +110,6 @@ namespace TinyRTS.BuildingSystem
         public void HideTiles()
         {
             gridVisualizer.HideTileVisuals();
-        }
-
-        public void UpdateGrid()
-        {
-            gridVisualizer.UpdateGrid();
         }
     }
 }

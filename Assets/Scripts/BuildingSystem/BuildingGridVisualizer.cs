@@ -9,6 +9,8 @@ namespace TinyRTS.BuildingSystem
     {
         [SerializeField] private BuildingGridTileVisual tilePrefab;
         [SerializeField] List<BuildingGridTileVisual> tileVisuals;
+
+        [SerializeField] private List<GameObject> envObjects;
         [SerializeField] LayerMask layerMask;
         private readonly int _activeTilesRange = 15;
 
@@ -27,14 +29,12 @@ namespace TinyRTS.BuildingSystem
                         buildingGridTileVisual.Initialize(tilePosition);
                         tileVisuals.Add(tileVisual);
                     }
-
-                    var tile = BuildingGrid.Instance.GetTile(x, y);
-                    CheckForColliders(tile, tileVisual);
                 }
             }
 
             HideTileVisuals();
         }
+
 
         public void ShowTileVisuals()
         {
@@ -67,25 +67,6 @@ namespace TinyRTS.BuildingSystem
             {
                 tileVisual.gameObject.SetActive(false);
             }
-        }
-
-        public void UpdateGrid()
-        {
-            foreach (var tileVisual in tileVisuals)
-            {
-                var tile = tileVisual.Tile;
-                if (tile != null)
-                {
-                    CheckForColliders(tile, tileVisual);
-                }
-            }
-        }
-
-        private void CheckForColliders(BuildingGridTile tile, BuildingGridTileVisual tileVisual)
-        {
-            var hasCollider = Physics.OverlapBox(new Vector3(tile.Position.x, 0f, tile.Position.y),
-                tileVisual.transform.localScale, tileVisual.transform.localRotation, layerMask).Length > 0;
-            tile.SetOccupied(hasCollider);
         }
     }
 }

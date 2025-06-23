@@ -32,7 +32,7 @@ namespace TinyRTS.Unit
             _selectorImage.enabled = false;
         }
 
-        public void MoveTo(Vector3 targetPosition)
+        public void MoveTo(float3 targetPosition)
         {
             if (math.distancesq(transform.position, targetPosition) < _acceptanceRadius * _acceptanceRadius)
             {
@@ -40,6 +40,12 @@ namespace TinyRTS.Unit
             }
 
             _agent.SetDestination(targetPosition);
+        }
+        
+        public void StopMovement()
+        {
+            _agent.isStopped = true;
+            _agent.ResetPath();
         }
 
         public virtual void CancelAction()

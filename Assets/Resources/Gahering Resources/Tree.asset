@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e212efac8a2749448cf3e503e0183ee2, type: 3}
   m_Name: Tree
   m_EditorClassIdentifier: 
+  width: 1
+  height: 1
   resourceName: Tree
   startingValue: 100
   type: 0

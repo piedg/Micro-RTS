@@ -21,6 +21,7 @@ namespace TinyRTS.Unit
             var distSqr = math.distancesq(transform.position, _currentGatherable.transform.position);
             if (distSqr <= gatherRange * gatherRange)
             {
+                StopMovement();
                 if(_currentGatherable.IsDepleted)
                 {
                     StopGathering();

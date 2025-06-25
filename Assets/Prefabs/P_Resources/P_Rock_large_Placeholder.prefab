@@ -69,6 +69,16 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7673737068253622468, guid: 21945a8d0b7956a4eb55da86bbf4f41d,
+        type: 3}
+      propertyPath: m_Extents.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7673737068253622468, guid: 21945a8d0b7956a4eb55da86bbf4f41d,
+        type: 3}
+      propertyPath: m_Extents.z
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7805196754371893047, guid: 21945a8d0b7956a4eb55da86bbf4f41d,
         type: 3}
       propertyPath: resourceData

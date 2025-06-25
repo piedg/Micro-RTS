@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e212efac8a2749448cf3e503e0183ee2, type: 3}
-  m_Name: Tree
+  m_Name: R_Tree_medium
   m_EditorClassIdentifier: 
   width: 1
   height: 1
